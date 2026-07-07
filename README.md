@@ -40,6 +40,34 @@ I am a Software Engineer dedicated to architecting scalable, high-throughput int
 
 ---
 
+## 🖥️ AI Workspace — Live Application
+
+**AI Workspace** is a unified, professional interface for interacting with AI models — built with Streamlit. It supports multiple providers (OpenRouter · OpenAI · a keyless Demo mode), custom system-prompt personas, prompt templates, streaming markdown responses, multiple chat sessions, dark/light mode, token & latency telemetry, and robust error handling.
+
+### 📸 Screenshots
+
+**Dark Mode — Home**
+![AI Workspace — Home (Dark Mode)](screenshots/01-home-dark.png)
+
+**Live Conversation (Demo Mode) — streaming markdown & telemetry**
+![AI Workspace — Demo Conversation](screenshots/02-demo-chat.png)
+
+**Light Mode — Home**
+![AI Workspace — Home (Light Mode)](screenshots/03-light-mode.png)
+
+### ⚙️ Quick Start
+
+Full instructions in **[INSTALLATION.md](INSTALLATION.md)**.
+
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+> 🧪 No API key? Select **Demo (Simulated)** as the provider to try the full UI instantly.
+
+---
+
 ## 🎯 Specific Fellowship Learning Goals
 
 1. **Stateful Agentic Architecture:** Evolve past elementary API wrappers to engineer autonomous, deterministic loop frameworks using advanced contextual memory layers and self-reflection mechanics.
@@ -53,11 +81,24 @@ I am a Software Engineer dedicated to architecting scalable, high-throughput int
 ### Week 1 Deliverables
 
 - **Assignment 1:** Professional Environment Validation & Repository Architecture
-- **Assignment 2:** Technical Research Report (_"The Evolution of AI Agents and Modern AI Engineering"_)
-- **Assignment 3:** [AI Workspace Dashboard](./app.py) — _Unified UI Interface built with Streamlit featuring model toggling and custom system prompt profiles._
-- **Assignment 4:** Prompt Engineering Comparative Logs _(Notebook demonstrating Role, CoT, Few-Shot, and JSON structural tracking)_
-- **Assignment 5:** Application Core Request/Response Pipeline Diagrams (Max 2 Pages)
-- **Assignment 6:** Week 1 Builder Journal
+- **Assignment 2:** [Technical Research Report](RESEARCH_REPORT.md) — _"The Evolution of AI Agents and Modern AI Engineering"_
+- **Assignment 3:** [AI Workspace Dashboard](app.py) — _Unified UI built with Streamlit featuring model toggling and custom system-prompt profiles._
+- **Assignment 4:** [Prompt Engineering Experiments](PROMPT_EXPERIMENTS.md) — _Role, CoT, Few-Shot, JSON, and optimization trials with live outputs._
+- **Assignment 5:** [Application Architecture](ARCHITECTURE.md) — _Request/response pipeline diagrams (Max 2 Pages)._
+- **Assignment 6:** [Week 1 Builder Journal](BUILDER_JOURNAL.md)
+
+### 📦 Repository Contents
+
+| Deliverable                    | File                                           |
+| :----------------------------- | :--------------------------------------------- |
+| Source Code                    | [app.py](app.py)                               |
+| Requirements                   | [requirements.txt](requirements.txt)           |
+| Installation Guide             | [INSTALLATION.md](INSTALLATION.md)             |
+| Research Report                | [RESEARCH_REPORT.md](RESEARCH_REPORT.md)       |
+| Prompt Engineering Experiments | [PROMPT_EXPERIMENTS.md](PROMPT_EXPERIMENTS.md) |
+| Architecture Diagram           | [ARCHITECTURE.md](ARCHITECTURE.md)             |
+| Builder Journal                | [BUILDER_JOURNAL.md](BUILDER_JOURNAL.md)       |
+| Screenshots                    | [screenshots/](screenshots/)                   |
 
 ---
 

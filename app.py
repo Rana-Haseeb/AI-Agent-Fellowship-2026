@@ -101,9 +101,9 @@ def inject_css(dark: bool):
                  muted="#9aa4b2", border="#262d3d", user="#1f6feb", user2="#388bfd",
                  bot="#20293a", accent="#7c5cff", accent2="#00d4ff")
     else:
-        c = dict(bg="#f4f6fb", panel="#ffffff", panel2="#f0f3fa", text="#1a1f2e",
-                 muted="#5b6472", border="#e2e8f2", user="#2563eb", user2="#3b82f6",
-                 bot="#eef2fb", accent="#6d4bff", accent2="#0ea5e9")
+        c = dict(bg="#eef2f8", panel="#ffffff", panel2="#ffffff", text="#1a1f2e",
+                 muted="#5b6472", border="#c8d2e4", user="#2563eb", user2="#3b82f6",
+                 bot="#ffffff", accent="#6d4bff", accent2="#0ea5e9")
 
     st.markdown(f"""
     <style>
@@ -185,6 +185,11 @@ def inject_css(dark: bool):
     [data-testid="stChatMessage"] code {{ font-family:'JetBrains Mono',monospace;
         background:rgba(124,92,255,.12); padding:2px 6px; border-radius:6px; }}
     [data-testid="stChatInput"] textarea {{ background:var(--panel2)!important; color:var(--text)!important; }}
+    [data-testid="stBottom"], [data-testid="stBottom"] > div,
+    [data-testid="stBottomBlockContainer"], [data-testid="stChatInput"] {{ background:var(--bg)!important; }}
+    [data-testid="stChatInput"] {{ border:none!important; box-shadow:none!important; }}
+    [data-testid="stChatInput"] > div {{ background:var(--panel2)!important;
+        border:1px solid var(--border)!important; border-radius:12px!important; }}
 
     /* ---------- Empty state ---------- */
     .empty {{ text-align:center; padding:52px 20px; color:var(--muted); }}
@@ -192,6 +197,25 @@ def inject_css(dark: bool):
     .chip {{ display:inline-block; background:var(--panel2); border:1px solid var(--border);
         color:var(--text); padding:8px 14px; border-radius:22px; margin:5px; font-size:.85rem; font-weight:500; }}
     .stMetric {{ background:var(--panel2); border:1px solid var(--border); border-radius:12px; padding:8px 12px; }}
+    .metric {{ box-shadow:0 1px 3px rgba(2,6,23,.06); }}
+
+    /* ---------- Widget theming (works in both light & dark) ---------- */
+    /* Divider lines */
+    hr {{ border:none!important; border-top:1px solid var(--border)!important; opacity:1!important; margin:.6rem 0!important; }}
+    /* Toggle switches (Dark Mode, Enter model manually) — make track/thumb visible */
+    [data-baseweb="checkbox"] > div:first-child {{ border:1px solid var(--border)!important; }}
+    [data-baseweb="checkbox"] > div:first-child > div {{ box-shadow:0 1px 2px rgba(2,6,23,.35)!important; }}
+    /* Text-input wrappers — fixes dark box on API-key / password fields */
+    .stTextInput [data-baseweb="base-input"], .stTextInput [data-baseweb="input"] {{
+        background:var(--panel2)!important; }}
+    .stTextInput button {{ background:transparent!important; color:var(--muted)!important; border:none!important; }}
+    /* Chat send button */
+    [data-testid="stChatInputSubmitButton"] {{ color:var(--accent)!important; background:transparent!important; }}
+    [data-testid="stChatInputSubmitButton"]:hover {{ background:rgba(124,92,255,.12)!important; }}
+    /* Disabled buttons stay visible (e.g. Export with no messages) */
+    .stButton>button:disabled, .stDownloadButton>button:disabled {{
+        background:var(--panel2)!important; color:var(--muted)!important;
+        border:1px solid var(--border)!important; opacity:.75!important; }}
     </style>
     """, unsafe_allow_html=True)
 
