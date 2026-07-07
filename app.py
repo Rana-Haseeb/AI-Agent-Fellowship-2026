@@ -18,9 +18,10 @@ load_dotenv()
 # ==================================================================================
 #  PAGE CONFIG
 # ==================================================================================
+_LOGO = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "logo.png")
 st.set_page_config(
     page_title="AI Workspace",
-    page_icon="🧠",
+    page_icon=_LOGO if os.path.exists(_LOGO) else "🔷",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -263,7 +264,20 @@ def stream_words(text: str):
 #  SIDEBAR
 # ==================================================================================
 with st.sidebar:
-    st.markdown("### 🧠 AI Workspace")
+    st.markdown('''
+    <div style="display:flex;align-items:center;gap:10px;margin:0 0 2px;">
+      <svg width="26" height="26" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="nxg" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#7c5cff"/><stop offset="1" stop-color="#00d4ff"/></linearGradient></defs>
+        <line x1="32" y1="33" x2="32" y2="14" stroke="url(#nxg)" stroke-width="3.4" stroke-linecap="round"/>
+        <line x1="32" y1="33" x2="15" y2="49" stroke="url(#nxg)" stroke-width="3.4" stroke-linecap="round"/>
+        <line x1="32" y1="33" x2="49" y2="49" stroke="url(#nxg)" stroke-width="3.4" stroke-linecap="round"/>
+        <circle cx="32" cy="33" r="7" fill="url(#nxg)"/><circle cx="32" cy="13" r="4.4" fill="url(#nxg)"/>
+        <circle cx="15" cy="49" r="4.4" fill="url(#nxg)"/><circle cx="49" cy="49" r="4.4" fill="url(#nxg)"/>
+      </svg>
+      <span style="font-size:1.3rem;font-weight:800;color:var(--text);letter-spacing:-.3px;">AI Workspace</span>
+    </div>
+    ''', unsafe_allow_html=True)
     st.caption("Unified interface for AI models")
 
     # ---- Appearance ----
@@ -366,7 +380,14 @@ with st.sidebar:
 # ==================================================================================
 st.markdown(f"""
 <div class="hero">
-    <h1>🧠 AI Workspace</h1>
+    <h1 style="display:flex;align-items:center;gap:12px;">
+      <svg width="34" height="34" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <line x1="32" y1="33" x2="32" y2="14" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+        <line x1="32" y1="33" x2="15" y2="49" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+        <line x1="32" y1="33" x2="49" y2="49" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+        <circle cx="32" cy="33" r="7" fill="#fff"/><circle cx="32" cy="13" r="4.4" fill="#fff"/>
+        <circle cx="15" cy="49" r="4.4" fill="#fff"/><circle cx="49" cy="49" r="4.4" fill="#fff"/>
+      </svg>AI Workspace</h1>
     <p>A unified, professional interface for interacting with AI models.</p>
     <span class="pill">● {provider} · {model_option}</span>
 </div>
