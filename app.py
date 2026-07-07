@@ -160,6 +160,20 @@ def inject_css(dark: bool):
         border:1px solid var(--border)!important; border-radius:10px!important; }}
     .stTextInput input:focus, .stTextArea textarea:focus {{ border-color:var(--accent)!important;
         box-shadow:0 0 0 2px rgba(124,92,255,.25)!important; }}
+    /* Robust selectbox theming (version-agnostic — works on Streamlit Cloud too) */
+    [data-baseweb="select"] > div {{
+        background:var(--panel2)!important; border:1px solid var(--border)!important;
+        border-radius:10px!important; }}
+    [data-baseweb="select"] div, [data-baseweb="select"] span,
+    [data-baseweb="select"] input {{ color:var(--text)!important; }}
+    [data-baseweb="select"] svg {{ fill:var(--muted)!important; }}
+    /* Dropdown menu options popup */
+    [data-baseweb="popover"] div, [data-baseweb="menu"], [role="listbox"] {{
+        background:var(--panel)!important; }}
+    [role="option"] {{ background:var(--panel)!important; color:var(--text)!important; }}
+    [role="option"]:hover {{ background:var(--panel2)!important; }}
+    /* Placeholder text visible in both themes (fixes invisible "Ask anything…") */
+    input::placeholder, textarea::placeholder {{ color:var(--muted)!important; opacity:1!important; }}
 
     /* ---------- Buttons ---------- */
     .stButton>button, .stDownloadButton>button {{

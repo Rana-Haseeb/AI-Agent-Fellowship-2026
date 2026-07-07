@@ -1,0 +1,15 @@
+# Pin a fixed base theme so the deployed app renders identically to local.
+# Without this, Streamlit Cloud may pick a different base theme than your machine,
+# which makes widgets (selectboxes, inputs) look wrong. The in-app Dark/Light
+# toggle layers custom CSS on top of this base.
+
+[theme]
+base = "dark"
+primaryColor = "#7c5cff"
+backgroundColor = "#0e1117"
+secondaryBackgroundColor = "#1c2230"
+textColor = "#e6e9ef"
+font = "sans serif"
+
+[server]
+headless = true
