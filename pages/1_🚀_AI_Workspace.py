@@ -56,6 +56,15 @@ PROVIDERS = {
             "Cohere North Mini Code · Free (fastest)": "cohere/north-mini-code:free",
         },
     },
+    "Google AI Studio": {
+        "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+        "env": "GOOGLE_API_KEY",
+        "note": "🔑 Get a **free** key at aistudio.google.com/apikey (Gemini API).",
+        "models": {
+            "Gemini 1.5 Flash · Free tier": "gemini-1.5-flash",
+            "Gemini 1.5 Pro · Free tier": "gemini-1.5-pro",
+        },
+    },
     "Demo (Simulated)": {
         "base_url": None,
         "env": None,
