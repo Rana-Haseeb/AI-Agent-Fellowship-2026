@@ -3,7 +3,11 @@ openai>=1.30.0
 python-dotenv>=1.0.0
 
 # --- Week 2: Document Intelligence (RAG) ---
-langchain
+# Import the exact LangChain sub-packages we use, so they are always installed
+# (the bare `langchain` meta-package did NOT reliably pull langchain-text-splitters
+# on Streamlit Cloud -> ModuleNotFoundError).
+langchain-core
+langchain-text-splitters
 langchain-huggingface
 chromadb
 pypdf
