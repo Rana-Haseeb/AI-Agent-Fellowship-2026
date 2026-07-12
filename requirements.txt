@@ -3,13 +3,8 @@ openai>=1.30.0
 python-dotenv>=1.0.0
 
 # --- Week 2: Document Intelligence (RAG) ---
-# Uncomment these when we implement the RAG pipeline. They are NOT needed for the
-# current scaffold, and installing them early can break the live deploy:
-# sentence-transformers pulls in torch (~2 GB), which may exceed Streamlit Cloud's
-# free-tier build/memory limits. When we build the pipeline we may prefer lightweight
-# API-based embeddings (OpenAI / OpenRouter) instead of local models.
-# langchain>=0.2.0
-# chromadb>=0.5.0
-# faiss-cpu>=1.8.0
-# pypdf>=4.0.0
-# sentence-transformers>=2.7.0
+langchain
+chromadb
+faiss-cpu
+pypdf
+sentence-transformers

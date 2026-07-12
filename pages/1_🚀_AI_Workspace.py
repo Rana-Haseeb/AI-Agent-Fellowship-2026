@@ -365,6 +365,10 @@ if user_input is not None:
                     low = err.lower()
                     if "api_key" in low or "authentication" in low or "401" in low or "invalid_api_key" in low:
                         st.error("🔑 **Invalid API key.** Please check your credentials and try again.")
+                    elif "403" in low or "permission_denied" in low or "denied access" in low:
+                        st.error("🚫 **Access denied by the provider.** Your project or region may not be "
+                                 "permitted to use this model (common with Google AI Studio in some countries). "
+                                 "Try another provider — e.g. use Gemini via **OpenRouter** — or a new key.")
                     elif "404" in low or "no endpoints" in low or "not found" in low:
                         st.error(f"🚫 **Model unavailable.** `{model_option}` isn't offered by "
                                  f"{provider} right now. Pick a different model from the sidebar.")
