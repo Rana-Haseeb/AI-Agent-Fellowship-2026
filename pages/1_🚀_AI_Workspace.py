@@ -61,8 +61,8 @@ PROVIDERS = {
         "env": "GOOGLE_API_KEY",
         "note": "🔑 Get a **free** key at aistudio.google.com/apikey (Gemini API).",
         "models": {
-            "Gemini 1.5 Flash · Free tier": "gemini-1.5-flash",
-            "Gemini 1.5 Pro · Free tier": "gemini-1.5-pro",
+            "Gemini 3.5 Flash · Free tier": "gemini-3.5-flash",
+            "Gemini 3.1 Flash Lite · Free tier": "gemini-3.1-flash-lite",
         },
     },
     "Demo (Simulated)": {
