@@ -4,7 +4,7 @@ python-dotenv>=1.0.0
 
 # --- Week 2: Document Intelligence (RAG) ---
 langchain
+langchain-huggingface
 chromadb
-faiss-cpu
 pypdf
 sentence-transformers

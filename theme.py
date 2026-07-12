@@ -185,6 +185,18 @@ def inject_css(dark: bool):
     .nav-badge {{ display:inline-block; font-size:.68rem; font-weight:700; padding:2px 10px;
         border-radius:20px; background:rgba(124,92,255,.15); color:var(--accent); }}
 
+    /* ---------- Citation / source cards ---------- */
+    .cite-card {{ background:var(--panel2); border:1px solid var(--border);
+        border-left:3px solid var(--accent); border-radius:10px; padding:10px 14px; margin:8px 0 2px; }}
+    .cite-card .ct {{ font-size:.7rem; text-transform:uppercase; letter-spacing:.9px;
+        color:var(--muted); font-weight:700; margin-bottom:6px; }}
+    .cite-item {{ font-size:.86rem; color:var(--text); padding:6px 0; border-top:1px solid var(--border); }}
+    .cite-item:first-of-type {{ border-top:none; }}
+    .cite-src {{ font-weight:700; }}
+    .cite-badge {{ font-size:.6rem; font-weight:700; color:var(--accent);
+        background:rgba(124,92,255,.16); padding:1px 8px; border-radius:20px; margin-left:8px; }}
+    .cite-snip {{ color:var(--muted); font-size:.78rem; margin-top:3px; line-height:1.4; }}
+
     /* ---------- Chat bubbles ---------- */
     [data-testid="stChatMessage"] {{ background:var(--bot); border:1px solid var(--border);
         border-radius:14px; padding:6px 14px; margin:8px 0; box-shadow:0 2px 8px -4px rgba(0,0,0,.2); }}

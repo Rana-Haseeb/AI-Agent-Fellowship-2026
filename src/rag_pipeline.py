@@ -223,6 +223,7 @@ class RAGPipeline:
         query: str,
         vector_store_results: List[Dict[str, Any]],
         chat_history: Optional[List[Dict[str, str]]] = None,
+        persona: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Generate a grounded answer for ``query`` using retrieved chunks.
 
@@ -267,7 +268,16 @@ class RAGPipeline:
             f'If the answer is not present, reply exactly: "{FALLBACK_ANSWER}"'
         )
 
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        # Optional persona sets tone/role; the grounding rules always stay authoritative.
+        system_content = SYSTEM_PROMPT
+        if persona and persona.strip():
+            system_content = (
+                f"{persona.strip()}\n\n"
+                "Regardless of the role/persona above, you MUST always obey these "
+                f"strict document-grounding rules:\n{SYSTEM_PROMPT}"
+            )
+
+        messages = [{"role": "system", "content": system_content}]
         messages += _history_messages(chat_history)
         messages.append({"role": "user", "content": user_message})
 
@@ -330,6 +340,9 @@ def generate_rag_response(
     query: str,
     vector_store_results: List[Dict[str, Any]],
     chat_history: Optional[List[Dict[str, str]]] = None,
+    persona: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Grounded RAG answer using the default (env-configured) pipeline."""
-    return get_pipeline().generate_rag_response(query, vector_store_results, chat_history)
+    return get_pipeline().generate_rag_response(
+        query, vector_store_results, chat_history, persona=persona
+    )
