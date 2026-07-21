@@ -47,13 +47,13 @@ I am a Software Engineer dedicated to architecting scalable, high-throughput int
 ### 📸 Screenshots
 
 **Dark Mode — Home**
-![AI Workspace — Home (Dark Mode)](screenshots/01-home-dark.png)
+![AI Workspace — Home (Dark Mode)](docs/week1/screenshots/01-home-dark.png)
 
 **Live Conversation (Demo Mode) — streaming markdown & telemetry**
-![AI Workspace — Demo Conversation](screenshots/02-demo-chat.png)
+![AI Workspace — Demo Conversation](docs/week1/screenshots/02-demo-chat.png)
 
 **Light Mode — Home**
-![AI Workspace — Home (Light Mode)](screenshots/03-light-mode.png)
+![AI Workspace — Home (Light Mode)](docs/week1/screenshots/03-light-mode.png)
 
 ### ⚙️ Quick Start
 
@@ -78,27 +78,34 @@ streamlit run app.py
 
 ## 📂 Fellowship Phase Tracking
 
-### Week 1 Deliverables
+### 🗓️ Week 1 — From AI User to AI Builder
 
 - **Assignment 1:** Professional Environment Validation & Repository Architecture
-- **Assignment 2:** [Technical Research Report](RESEARCH_REPORT.md) — _"The Evolution of AI Agents and Modern AI Engineering"_
-- **Assignment 3:** [AI Workspace Dashboard](app.py) — _Unified UI built with Streamlit featuring model toggling and custom system-prompt profiles._
-- **Assignment 4:** [Prompt Engineering Experiments](PROMPT_EXPERIMENTS.md) — _Role, CoT, Few-Shot, JSON, and optimization trials with live outputs._
-- **Assignment 5:** [Application Architecture](ARCHITECTURE.md) — _Request/response pipeline diagrams (Max 2 Pages)._
-- **Assignment 6:** [Week 1 Builder Journal](BUILDER_JOURNAL.md)
+- **Assignment 2:** [Technical Research Report](docs/week1/RESEARCH_REPORT.md) — _"The Evolution of AI Agents and Modern AI Engineering"_
+- **Assignment 3:** [AI Workspace](pages/1_🚀_AI_Workspace.py) — _Unified UI with model toggling and custom system-prompt profiles._
+- **Assignment 4:** [Prompt Engineering Experiments](docs/week1/PROMPT_EXPERIMENTS.md) — _Role, CoT, Few-Shot, JSON, and optimization trials._
+- **Assignment 5:** [Application Architecture](docs/week1/ARCHITECTURE.md) — _Request/response pipeline diagrams._
+- **Assignment 6:** [Builder Journal](docs/week1/BUILDER_JOURNAL.md)
+
+### 🗓️ Week 2 — Production-Grade RAG Application
+
+- **Assignment 1:** [Document Intelligence](pages/2_📄_Document_Intelligence.py) — _Enterprise RAG platform (upload → index → retrieve → grounded answers with citations)._
+- **Assignment 2:** [Research Report](docs/week2/RESEARCH_REPORT.md) — _"Designing Enterprise Retrieval-Augmented Generation Systems"_
+- **Assignment 3:** [RAG Architecture](docs/week2/ARCHITECTURE.md) — _Full 10-stage retrieval pipeline._
+- **Assignment 4:** [Experiments](docs/week2/EXPERIMENTS.md) — _Chunk size, overlap, prompt templates, embedding models._
+- **Assignment 5:** [Builder Journal](docs/week2/BUILDER_JOURNAL.md)
 
 ### 📦 Repository Contents
 
-| Deliverable                    | File                                           |
-| :----------------------------- | :--------------------------------------------- |
-| Source Code                    | [app.py](app.py)                               |
-| Requirements                   | [requirements.txt](requirements.txt)           |
-| Installation Guide             | [INSTALLATION.md](INSTALLATION.md)             |
-| Research Report                | [RESEARCH_REPORT.md](RESEARCH_REPORT.md)       |
-| Prompt Engineering Experiments | [PROMPT_EXPERIMENTS.md](PROMPT_EXPERIMENTS.md) |
-| Architecture Diagram           | [ARCHITECTURE.md](ARCHITECTURE.md)             |
-| Builder Journal                | [BUILDER_JOURNAL.md](BUILDER_JOURNAL.md)       |
-| Screenshots                    | [screenshots/](screenshots/)                   |
+| Deliverable | Week 1 | Week 2 |
+| :---------- | :----- | :----- |
+| Research Report | [📄](docs/week1/RESEARCH_REPORT.md) | [📄](docs/week2/RESEARCH_REPORT.md) |
+| Architecture | [📄](docs/week1/ARCHITECTURE.md) | [📄](docs/week2/ARCHITECTURE.md) |
+| Experiments | [📄](docs/week1/PROMPT_EXPERIMENTS.md) | [📄](docs/week2/EXPERIMENTS.md) |
+| Builder Journal | [📄](docs/week1/BUILDER_JOURNAL.md) | [📄](docs/week2/BUILDER_JOURNAL.md) |
+| Screenshots | [🖼️](docs/week1/screenshots/) | [🖼️](docs/week2/screenshots/) |
+
+**Shared:** [Source Code](app.py) · [requirements.txt](requirements.txt) · [Installation Guide](INSTALLATION.md)
 
 ---
 
