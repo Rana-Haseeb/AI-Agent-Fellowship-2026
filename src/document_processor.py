@@ -46,7 +46,7 @@ if not logging.getLogger().handlers and not logger.handlers:
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
 
-SUPPORTED_EXTENSIONS = {".pdf", ".txt", ".md"}
+SUPPORTED_EXTENSIONS = {".pdf", ".txt", ".md", ".docx"}
 
 
 # --------------------------------------------------------------------------- #
@@ -121,6 +121,46 @@ def _extract_pdf(raw: bytes, filename: str) -> List[Dict[str, Any]]:
     return records
 
 
+def _extract_docx(raw: bytes, filename: str) -> List[Dict[str, Any]]:
+    """Extract text from a .docx. Word has no fixed pages, so paragraphs are
+    grouped into synthetic 'pages' to keep citations useful."""
+    try:
+        import docx  # python-docx
+    except ImportError:
+        logger.error("python-docx is not installed; cannot read '%s'.", filename)
+        return []
+
+    try:
+        document = docx.Document(io.BytesIO(raw))
+    except Exception as exc:
+        logger.error("Failed to open DOCX '%s': %s", filename, exc)
+        return []
+
+    paragraphs = [p.text.strip() for p in document.paragraphs if p.text and p.text.strip()]
+    # include table text too — often where the real content lives
+    for table in getattr(document, "tables", []):
+        for row in table.rows:
+            cells = [c.text.strip() for c in row.cells if c.text and c.text.strip()]
+            if cells:
+                paragraphs.append(" | ".join(cells))
+
+    if not paragraphs:
+        logger.warning("DOCX '%s' contains no readable text.", filename)
+        return []
+
+    # group ~40 paragraphs per synthetic page so page numbers stay meaningful
+    records, per_page = [], 40
+    for idx in range(0, len(paragraphs), per_page):
+        text = "\n".join(paragraphs[idx: idx + per_page]).strip()
+        if text:
+            records.append({
+                "text": text,
+                "metadata": {"source": filename, "page": idx // per_page + 1},
+            })
+    logger.info("Parsed DOCX '%s' → %d synthetic page(s).", filename, len(records))
+    return records
+
+
 def _extract_plaintext(raw: bytes, filename: str) -> List[Dict[str, Any]]:
     """Extract text from a .txt or .md file as a single record."""
     text = _decode_text(raw).strip()
@@ -175,6 +215,8 @@ def extract_text_and_metadata(uploaded_file: Any) -> List[Dict[str, Any]]:
 
     if ext == ".pdf":
         return _extract_pdf(raw, filename)
+    if ext == ".docx":
+        return _extract_docx(raw, filename)
     return _extract_plaintext(raw, filename)
 
 

@@ -158,12 +158,23 @@ def inject_css(dark: bool):
     /* Placeholder text visible in both themes */
     input::placeholder, textarea::placeholder {{ color:var(--muted)!important; opacity:1!important; }}
 
-    /* ---------- Buttons ---------- */
-    .stButton>button, .stDownloadButton>button {{
-        background:var(--panel2); color:var(--text); border:1px solid var(--border);
-        border-radius:10px; font-weight:600; transition:all .15s ease; }}
-    .stButton>button:hover, .stDownloadButton>button:hover {{
-        border-color:var(--accent); color:var(--accent); transform:translateY(-1px); }}
+    /* ---------- Buttons (incl. form-submit & file-uploader browse) ---------- */
+    .stButton>button, .stDownloadButton>button,
+    [data-testid="stFormSubmitButton"] button,
+    [data-testid="stFileUploader"] button,
+    [data-testid="stFileUploaderDropzone"] button {{
+        background:var(--panel2)!important; color:var(--text)!important;
+        border:1px solid var(--border)!important;
+        border-radius:10px!important; font-weight:600; transition:all .15s ease; }}
+    .stButton>button:hover, .stDownloadButton>button:hover,
+    [data-testid="stFormSubmitButton"] button:hover,
+    [data-testid="stFileUploader"] button:hover,
+    [data-testid="stFileUploaderDropzone"] button:hover {{
+        border-color:var(--accent)!important; color:var(--accent)!important;
+        transform:translateY(-1px); }}
+    /* Form container should follow the theme too */
+    [data-testid="stForm"] {{ background:transparent!important;
+        border:1px solid var(--border)!important; border-radius:12px!important; }}
 
     /* ---------- Metric cards ---------- */
     .metric-row {{ display:flex; gap:10px; margin-bottom:6px; }}
@@ -184,6 +195,22 @@ def inject_css(dark: bool):
     .nav-card p {{ margin:0; color:var(--muted); font-size:.9rem; }}
     .nav-badge {{ display:inline-block; font-size:.68rem; font-weight:700; padding:2px 10px;
         border-radius:20px; background:rgba(124,92,255,.15); color:var(--accent); }}
+
+    /* ---------- Document library rows / status ---------- */
+    .doc-row {{ background:var(--panel2); border:1px solid var(--border); border-radius:10px;
+        padding:8px 10px; margin-bottom:6px; }}
+    .doc-name {{ font-size:.85rem; font-weight:700; color:var(--text); word-break:break-word; }}
+    .doc-meta {{ font-size:.72rem; color:var(--muted); margin-top:3px; }}
+    .pill-ok {{ display:inline-block; font-size:.58rem; font-weight:700; padding:1px 8px;
+        border-radius:20px; background:rgba(34,197,94,.18); color:#16a34a; }}
+    .match-badge {{ display:inline-block; font-size:.56rem; font-weight:700; padding:1px 7px;
+        border-radius:20px; background:rgba(14,165,233,.18); color:var(--accent2); margin-left:6px; }}
+    .tool-card {{ background:var(--panel2); border:1px solid var(--border); border-radius:12px;
+        padding:14px 16px; margin-bottom:10px; color:var(--text); }}
+    .tool-card h4 {{ margin:0 0 6px; font-size:.95rem; font-weight:800; color:var(--text); }}
+    .stat-mini {{ font-size:.72rem; color:var(--muted); }}
+    /* Login card */
+    .login-wrap {{ max-width:420px; margin:6vh auto 0; }}
 
     /* ---------- Citation / source cards ---------- */
     .cite-card {{ background:var(--panel2); border:1px solid var(--border);

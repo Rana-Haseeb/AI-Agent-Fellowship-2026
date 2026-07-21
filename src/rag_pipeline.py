@@ -128,13 +128,16 @@ def _build_context_and_citations(results: List[Dict[str, Any]]):
         page = meta.get("page", "?")
         text = hit.get("text", "") or ""
 
-        blocks.append(f"{label} (document: {source}, page: {page})\n{text.strip()}")
+        chunk = meta.get("chunk", "?")
+        blocks.append(f"{label} (document: {source}, page: {page}, chunk: {chunk})\n{text.strip()}")
         citations.append({
             "label": label,
             "source": source,
             "page": page,
+            "chunk": chunk,                 # retrieved chunk reference
             "snippet": _snippet(text),
             "score": hit.get("score"),
+            "match": hit.get("match"),      # semantic / keyword / fused
         })
 
     return "\n\n".join(blocks), citations
@@ -151,6 +154,23 @@ def _history_messages(chat_history: Optional[List[Dict[str, str]]]) -> List[Dict
         if role in ("user", "assistant") and content.strip():
             cleaned.append({"role": role, "content": content})
     return cleaned[-_MAX_HISTORY_TURNS:]
+
+
+def _extract_usage(response: Any) -> Optional[Dict[str, int]]:
+    """Pull token counts off an OpenAI-compatible response (if the provider reports them)."""
+    usage = getattr(response, "usage", None)
+    if not usage:
+        return None
+    def _get(name):
+        value = getattr(usage, name, None)
+        return int(value) if isinstance(value, (int, float)) else 0
+    total = _get("total_tokens")
+    prompt_t, completion_t = _get("prompt_tokens"), _get("completion_tokens")
+    if not total:
+        total = prompt_t + completion_t
+    if not (total or prompt_t or completion_t):
+        return None
+    return {"prompt": prompt_t, "completion": completion_t, "total": total}
 
 
 def _friendly_error(exc: Exception) -> str:
@@ -289,6 +309,7 @@ class RAGPipeline:
                 temperature=self.temperature,
             )
             answer = (response.choices[0].message.content or "").strip()
+            usage = _extract_usage(response)
         except Exception as exc:
             logger.error("LLM generation failed: %s", exc)
             return self._result(_friendly_error(exc), [], error=str(exc),
@@ -308,16 +329,35 @@ class RAGPipeline:
             citations = []
 
         logger.info("RAG answer generated in %.2fs via %s/%s.", latency, self.provider, self.model)
-        return self._result(answer, citations, latency=latency)
+        return self._result(answer, citations, latency=latency, usage=usage)
+
+    # ----- auxiliary LLM tasks (summary / questions / comparison) --------- #
+    def complete(self, prompt: str, system: Optional[str] = None,
+                 temperature: float = 0.3, max_tokens: int = 700):
+        """One-shot completion for helper features. Returns (text, error, usage)."""
+        messages = []
+        if system:
+            messages.append({"role": "system", "content": system})
+        messages.append({"role": "user", "content": prompt})
+        try:
+            response = self.client.chat.completions.create(
+                model=self.model, messages=messages,
+                temperature=temperature, max_tokens=max_tokens,
+            )
+            return (response.choices[0].message.content or "").strip(), None, _extract_usage(response)
+        except Exception as exc:
+            logger.error("complete() failed: %s", exc)
+            return "", _friendly_error(exc), None
 
     # ----- output shaping ------------------------------------------------- #
-    def _result(self, answer, citations, error=None, latency=None) -> Dict[str, Any]:
+    def _result(self, answer, citations, error=None, latency=None, usage=None) -> Dict[str, Any]:
         return {
             "answer": answer,
             "citations": citations,
             "provider": self.provider,
             "model": self.model,
             "latency": latency,
+            "usage": usage,
             "error": error,
         }
 

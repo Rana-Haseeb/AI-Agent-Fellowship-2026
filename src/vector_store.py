@@ -21,6 +21,7 @@ from __future__ import annotations
 import hashlib
 import logging
 import os
+import re
 from typing import Any, Dict, List, Optional
 
 import chromadb
@@ -316,6 +317,113 @@ class VectorStore:
             logger.error("count() failed: %s", exc)
             return 0
 
+    def get_source_stats(self) -> Dict[str, Dict[str, int]]:
+        """Per-document stats for the library view:
+        ``{source: {"chunks": n, "pages": max_page}}``."""
+        try:
+            data = self.collection.get(include=["metadatas"])
+        except Exception as exc:
+            logger.error("get_source_stats() failed: %s", exc)
+            return {}
+
+        stats: Dict[str, Dict[str, int]] = {}
+        for meta in (data.get("metadatas") or []):
+            meta = meta or {}
+            source = meta.get("source")
+            if not source:
+                continue
+            entry = stats.setdefault(source, {"chunks": 0, "pages": 0})
+            entry["chunks"] += 1
+            try:
+                page = int(meta.get("page", 1))
+            except (TypeError, ValueError):
+                page = 1
+            entry["pages"] = max(entry["pages"], page)
+        return stats
+
+    def refresh_embeddings(self) -> int:
+        """Re-compute embeddings for every stored chunk and upsert them.
+        Useful after changing the embedding model. Returns chunks refreshed."""
+        try:
+            data = self.collection.get(include=["documents", "metadatas"])
+        except Exception as exc:
+            logger.error("refresh_embeddings() could not read collection: %s", exc)
+            return 0
+
+        ids = data.get("ids") or []
+        docs = data.get("documents") or []
+        metas = data.get("metadatas") or []
+        if not ids:
+            logger.info("refresh_embeddings(): nothing stored.")
+            return 0
+
+        try:
+            embeddings = self.embeddings.embed_documents(docs)
+            self.collection.upsert(ids=ids, documents=docs,
+                                   embeddings=embeddings, metadatas=metas)
+        except Exception as exc:
+            logger.error("refresh_embeddings() failed: %s", exc)
+            return 0
+
+        logger.info("Refreshed embeddings for %d chunk(s).", len(ids))
+        return len(ids)
+
+    def keyword_search(self, query: str, k: int = 6,
+                       filter_dict: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """Simple term-frequency keyword search over stored chunks.
+        Complements semantic search for exact terms, names, and numbers."""
+        terms = [t for t in re.findall(r"\w+", (query or "").lower()) if len(t) > 2]
+        if not terms:
+            return []
+        try:
+            data = self.collection.get(where=filter_dict or None,
+                                       include=["documents", "metadatas"])
+        except Exception as exc:
+            logger.error("keyword_search() failed: %s", exc)
+            return []
+
+        scored = []
+        for text, meta in zip(data.get("documents") or [], data.get("metadatas") or []):
+            low = (text or "").lower()
+            hits = sum(low.count(t) for t in terms)
+            if hits:
+                scored.append((hits, text, meta or {}))
+        scored.sort(key=lambda x: -x[0])
+        top = scored[:k]
+        best = top[0][0] if top else 1
+        return [{"text": t, "metadata": m, "score": round(h / best, 4), "match": "keyword"}
+                for h, t, m in top]
+
+    def hybrid_search(self, query: str, k: int = 6,
+                      filter_dict: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+        """Hybrid retrieval: fuse semantic + keyword results with Reciprocal
+        Rank Fusion so exact-term matches and meaning-based matches both surface."""
+        semantic = self.search_similar_chunks(query, k=k, filter_dict=filter_dict)
+        keyword = self.keyword_search(query, k=k, filter_dict=filter_dict)
+
+        def _key(hit):
+            m = hit.get("metadata", {}) or {}
+            return f"{m.get('source')}::{m.get('page')}::{m.get('chunk')}"
+
+        fused: Dict[str, Dict[str, Any]] = {}
+        for rank, hit in enumerate(semantic, start=1):
+            e = fused.setdefault(_key(hit), {"hit": dict(hit), "rrf": 0.0, "via": set()})
+            e["rrf"] += 1.0 / (60 + rank)
+            e["via"].add("semantic")
+        for rank, hit in enumerate(keyword, start=1):
+            e = fused.setdefault(_key(hit), {"hit": dict(hit), "rrf": 0.0, "via": set()})
+            e["rrf"] += 1.0 / (60 + rank)
+            e["via"].add("keyword")
+
+        ordered = sorted(fused.values(), key=lambda e: -e["rrf"])[:k]
+        results = []
+        for e in ordered:
+            hit = e["hit"]
+            hit["match"] = "+".join(sorted(e["via"]))
+            results.append(hit)
+        logger.info("Hybrid search returned %d fused hit(s).", len(results))
+        return results
+
     def list_sources(self) -> List[str]:
         """Distinct source document names currently in the store."""
         try:
@@ -360,3 +468,16 @@ def delete_document_from_store(file_name: str) -> int:
 
 def clear_all_vectors() -> bool:
     return get_store().clear_all_vectors()
+
+
+def refresh_embeddings() -> int:
+    return get_store().refresh_embeddings()
+
+
+def hybrid_search(query: str, k: int = 6,
+                  filter_dict: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    return get_store().hybrid_search(query, k=k, filter_dict=filter_dict)
+
+
+def get_source_stats() -> Dict[str, Dict[str, int]]:
+    return get_store().get_source_stats()
