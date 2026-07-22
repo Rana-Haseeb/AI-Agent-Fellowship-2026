@@ -173,8 +173,6 @@ AI-Agent-Fellowship-2026/
 
 **Shared:** [Source Code](src/) · [requirements.txt](requirements.txt) · [Installation Guide](INSTALLATION.md) · Screenshots ([W1](docs/week1/screenshots/) · [W2](docs/week2/screenshots/))
 
-🎬 **Demo Video:** `REPLACE_WITH_YOUR_VIDEO_LINK`
-
 ---
 
 ## 👤 Engineering Profile

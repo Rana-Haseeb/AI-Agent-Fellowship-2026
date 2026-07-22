@@ -52,14 +52,14 @@ API in Cloud Console.
 The habit I built this week: **measure before concluding.** Every one of these was solved by
 gathering evidence rather than guessing at a fix.
 
-**The incomplete answer.** Instead of tweaking parameters, I ran my own parser over the actual PDF
-and counted: 7 pages, 6,046 characters, 14 chunks — and confirmed all five elements *were* present
-in the extracted text. So indexing was fine. That reframed the question from "why didn't it index?"
-to "why didn't retrieval return it?" I then built a harness that swept chunk size 300/500/1000
-against ground-truth keywords. The result was unambiguous: the answer contained **1 of 5** elements
-at size 300 and **5 of 5** at 1000. The five-item list spanned ~900 characters and was being
-**split across chunks**; with `k=5` the model only ever received a fragment. Not an indexing bug —
-a chunking-and-retrieval bug, proven with numbers.
+**The incomplete answer.** Instead of tweaking parameters, I ran my parser over the actual PDF and
+counted: 7 pages, 6,046 characters, 14 chunks — and confirmed all five elements *were* in the
+extracted text. Indexing was fine. That reframed the question from "why didn't it index?" to "why
+didn't retrieval return it?" I then built a harness sweeping chunk size 300/500/1000 against
+ground-truth keywords. The result was unambiguous: **1 of 5** elements at size 300, **5 of 5** at
+1000. The list spanned ~900 characters and was being **split across chunks**; with `k=5` the model
+only ever received a fragment. Not an indexing bug — a chunking-and-retrieval bug, proven with
+numbers.
 
 **The Cloud crash.** I read the traceback carefully instead of skimming it. It failed on line 31 —
 my *fallback* import — which meant the primary import had already failed silently in the `except`.
@@ -73,11 +73,10 @@ still *running*. Filtering the log showed Streamlit's file-watcher walking `tran
 of lazy modules, each attempting a `torchvision` import. Not my code at all. Setting
 `fileWatcherType = "none"` took the log from hundreds of error lines to zero.
 
-**The Gemini 403.** I read the status code as data. A `401` means a bad key; a `404` means a bad
-model; a **`403`** means the key is fine but the *project* is denied. I verified by calling
-`/models` — which returned 200 and listed models — then `/chat/completions`, which returned 403. So
-the key authenticated and could read metadata but couldn't run inference: a project/region
-restriction, not something I could fix in code. I routed Gemini through OpenRouter instead.
+**The Gemini 403.** I read the status code as data: `401` = bad key, `404` = bad model, **`403`** =
+key fine but *project* denied. Calling `/models` returned 200 and listed models; `/chat/completions`
+returned 403. So the key authenticated and could read metadata but not run inference — a
+project/region restriction, unfixable in code. I routed Gemini through OpenRouter instead.
 
 **The invisible buttons.** Rather than guessing selectors, I queried the computed styles directly in
 a headless browser and found the file-uploader and form-submit buttons still carrying Streamlit's
@@ -120,15 +119,14 @@ robust prompt cheerfully produced a one-of-five answer, because the model can on
 the context it is handed. **Retrieval quality is the ceiling on answer quality**; no prompt
 engineering raises it.
 
-**Proxy metrics can point the wrong way.** Judged on retrieval recall alone, MiniLM beat BGE.
-Judged end-to-end on the answers users actually read, BGE won. If I had stopped at the retrieval
-metric I would have made the wrong call — a lesson that generalizes well beyond RAG.
+**Proxy metrics can point the wrong way.** Judged on retrieval recall alone, MiniLM beat BGE; judged
+end-to-end on the answers users actually read, BGE won. Stopping at the retrieval metric would have
+produced the wrong call — a lesson that generalizes well beyond RAG.
 
 **The same knob helps in one stage and hurts in another.** Prompt templates *lowered* retrieval
-quality (they dilute the query embedding) while *raising* answer quality (they instruct the model to
-be exhaustive). The right answer wasn't to pick a side — it was to split the stages: embed the raw
-question, template only the generation prompt. Good architecture often means refusing a false
-either/or.
+quality (diluting the query embedding) while *raising* answer quality (instructing the model to be
+exhaustive). The right move wasn't to pick a side but to split the stages: embed the raw question,
+template only the generation prompt. Good architecture often means refusing a false either/or.
 
 **RAG is a systems discipline, not a prompting trick.** Connecting an LLM to a vector store took an
 afternoon. Making it *reliable* — correct chunking, encoding fallbacks, upsert semantics, graceful
