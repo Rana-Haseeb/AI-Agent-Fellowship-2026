@@ -92,7 +92,21 @@ streamlit run app.py
 - **Assignment 1:** [Document Intelligence](pages/2_📄_Document_Intelligence.py) — _Enterprise RAG platform (upload → index → retrieve → grounded answers with citations)._
 - **Assignment 2:** [Research Report](docs/week2/RESEARCH_REPORT.md) — _"Designing Enterprise Retrieval-Augmented Generation Systems"_
 - **Assignment 3:** [RAG Architecture](docs/week2/ARCHITECTURE.md) — _Full 10-stage retrieval pipeline._
-- **Assignment 4:** [Experiments](docs/week2/EXPERIMENTS.md) — _Chunk size, overlap, prompt templates, embedding models._
+- **Assignment 4:** [Experiments](docs/week2/EXPERIMENTS.md) ✅ — _Measured trials on chunk size, overlap, prompt templates, and embedding models._
+
+> **📊 Key experimental results** (23 live LLM calls, measured end-to-end):
+>
+> - **Chunk size is decisive.** On the 5-part "Key Elements" question the model stated **1 of 5**
+>   elements at chunk 300 and **all 5** at chunk 1000 (answer coverage **0.20 → 1.00**) — proving the
+>   earlier failure was *retrieval fragmentation*, not bad ingestion.
+> - **Grounding holds.** The out-of-document control question was correctly refused in **3/3** runs.
+> - **Templates cut both ways.** The raw question *retrieves* best (+13% similarity) but *answers*
+>   worst; templates do the reverse. The app now **embeds the raw question and templates only the
+>   LLM prompt** — capturing both wins.
+> - **Better ranking beats better recall.** `bge-small` scored *lower* keyword recall than `MiniLM`
+>   yet produced **better answers** (0.90 vs 0.80) — retrieval proxies can mislead.
+>
+> Full methodology, verbatim answers, and limitations → **[docs/week2/EXPERIMENTS.md](docs/week2/EXPERIMENTS.md)**
 - **Assignment 5:** [Builder Journal](docs/week2/BUILDER_JOURNAL.md)
 
 ### 📦 Repository Contents

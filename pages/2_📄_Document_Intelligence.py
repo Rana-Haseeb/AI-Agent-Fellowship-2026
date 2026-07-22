@@ -570,7 +570,11 @@ question = typed if (typed and typed.strip()) else st.session_state.pending_ques
 st.session_state.pending_question = None
 
 if question:
+    # Templates shape the LLM prompt, but retrieval embeds the RAW question.
+    # Measured in Week 2 Experiment 3: templating the retrieval query dilutes the
+    # embedding and cut top-1 similarity by up to 10.5% (and recall on one question).
     final_q = question if selected_template == "— None —" else all_templates[selected_template] + question
+    retrieval_query = question
     messages.append({"role": "user", "content": final_q})
 
     answer, citations, retrieved, meta = "", [], [], None
@@ -582,11 +586,11 @@ if question:
         answer = ("🔑 **Add an API key** for the Answer Engine (sidebar) to generate a grounded answer. "
                   "Retrieval works without it, but the final answer needs an LLM.")
         retrieved = (store.hybrid_search if use_hybrid else store.search_similar_chunks)(
-            final_q, k=top_k, filter_dict=filter_dict)
+            retrieval_query, k=top_k, filter_dict=filter_dict)
     else:
         with st.spinner("Retrieving relevant context and generating a grounded answer…"):
             retrieved = (store.hybrid_search if use_hybrid else store.search_similar_chunks)(
-                final_q, k=top_k, filter_dict=filter_dict)
+                retrieval_query, k=top_k, filter_dict=filter_dict)
             history = [{"role": mm["role"], "content": mm["content"]}
                        for mm in messages if mm["role"] in ("user", "assistant")]
             result = make_pipeline().generate_rag_response(

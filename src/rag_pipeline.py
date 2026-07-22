@@ -308,7 +308,11 @@ class RAGPipeline:
                 messages=messages,
                 temperature=self.temperature,
             )
-            answer = (response.choices[0].message.content or "").strip()
+            # Some providers intermittently return choices=null / an empty list.
+            choices = getattr(response, "choices", None)
+            if not choices:
+                raise RuntimeError("Provider returned no choices (empty response).")
+            answer = (choices[0].message.content or "").strip()
             usage = _extract_usage(response)
         except Exception as exc:
             logger.error("LLM generation failed: %s", exc)
@@ -344,7 +348,10 @@ class RAGPipeline:
                 model=self.model, messages=messages,
                 temperature=temperature, max_tokens=max_tokens,
             )
-            return (response.choices[0].message.content or "").strip(), None, _extract_usage(response)
+            choices = getattr(response, "choices", None)
+            if not choices:
+                raise RuntimeError("Provider returned no choices (empty response).")
+            return (choices[0].message.content or "").strip(), None, _extract_usage(response)
         except Exception as exc:
             logger.error("complete() failed: %s", exc)
             return "", _friendly_error(exc), None
